@@ -1,0 +1,39 @@
+import asyncHandler from "../utils/asyncHandler.js";
+import jwt from "jsonwebtoken";
+import { prisma } from "../lib/prisma.ts";
+import { ApiError } from "../utils/apiError.js";
+
+export const verifyJWT = asyncHandler(async (req, _, next) => {
+    try {
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+    
+        if(!token) {
+            throw new ApiError("Unauthorized access, token missing", 401);
+        }
+    
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) 
+        
+        const user = await prisma.user.findUnique({
+            where: { id: decodedToken.id },
+            select: {
+                id: true,
+                image: true,
+                username: true,
+                role: true,
+                email: true,
+                createdAt: true
+            }
+        });
+
+    
+        if(!user) {
+            throw new ApiError("Unauthorized access, user not found", 401);
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        throw new ApiError("Unauthorized access, invalid token", 401);
+    }
+})
+
