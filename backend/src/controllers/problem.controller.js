@@ -1,5 +1,5 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import { db } from "../lib/prisma.js"
+import { prisma } from "../lib/prisma.ts"
 import { ApiError } from "../utils/apiError.js";
 import { stdin } from "node:process";
 import { getJudge0LangId, pollBatchResults, submitBatch } from "../lib/judge0.lib.js";
@@ -52,7 +52,7 @@ const createProblem = asyncHandler(async (req, res) => {
         }
     }
 
-    const newProblem = await db.problem.create({
+    const newProblem = await prisma.problem.create({
         data: {
             title,
             description,
