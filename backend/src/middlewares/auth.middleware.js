@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma.ts";
 import { ApiError } from "../utils/apiError.js";
 
-export const verifyJWT = asyncHandler(async (req, _, next) => {
+const verifyJWT = asyncHandler(async (req, _, next) => {
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     
@@ -37,3 +37,35 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     }
 })
 
+const checkAdmin = asyncHandler(async (req, _, next) => {
+    try {
+        const { userId } = req.user?.id
+        
+        if(!userId) {
+            throw new ApiError(401, "Invalid request")
+        }
+    
+        const user = await db.user.findUnique({
+            where: { 
+                id: userId 
+            },
+            select: {
+                role: true
+            }
+        })
+    
+        if(!user || user.role !== "ADMIN") {
+            throw new ApiError(403, "Can't add the problem")
+        }
+    
+        next()
+    } catch (error) {
+        console.log("Invalid role!!");
+        throw new ApiError(403, "Error checking user role!")
+    }
+})
+
+export { 
+    verifyJWT, 
+    checkAdmin 
+}
