@@ -27,25 +27,25 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
 
     
         if(!user) {
-            throw new ApiError("Unauthorized access, user not found", 401);
+            throw new ApiError(401, "Unauthorized access, user not found");
         }
 
         req.user = user;
         next();
     } catch (error) {
-        throw new ApiError("Unauthorized access, invalid token", 401);
+        throw new ApiError(401, "Unauthorized access, invalid token");
     }
 })
 
 const checkAdmin = asyncHandler(async (req, _, next) => {
     try {
-        const { userId } = req.user?.id
+        const userId = req.user?.id
         
         if(!userId) {
             throw new ApiError(401, "Invalid request")
         }
     
-        const user = await db.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: { 
                 id: userId 
             },
@@ -55,6 +55,8 @@ const checkAdmin = asyncHandler(async (req, _, next) => {
         })
     
         if(!user || user.role !== "ADMIN") {
+            console.log("User is not admin");
+            
             throw new ApiError(403, "Can't add the problem")
         }
     

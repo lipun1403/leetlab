@@ -1,7 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import { prisma } from "../lib/prisma.ts"
 import { ApiError } from "../utils/apiError.js";
-import { stdin } from "node:process";
 import { getJudge0LangId, pollBatchResults, submitBatch } from "../lib/judge0.lib.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
@@ -33,7 +32,7 @@ const createProblem = asyncHandler(async (req, res) => {
             source_code: solutionCode,
             language_id: languageId,
             stdin: input,
-            expected_output: output
+            expected_output: output.trim()
         }))
 
         const submissionResult = await submitBatch(submissions)
@@ -41,8 +40,9 @@ const createProblem = asyncHandler(async (req, res) => {
         const tokens = submissionResult.map((res) => res.token) 
 
         const results = await pollBatchResults(tokens)
-
+        
         for(let i=0;i<results.length;i++) {
+            console.log(results[i]);
             if(results[i].status.id !== 3) {
                 throw new ApiError(
                     400, 

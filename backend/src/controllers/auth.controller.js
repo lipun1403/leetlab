@@ -21,7 +21,7 @@ const generateRefreshToken = async function(id) {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: ms(process.env.REFRESH_TOKEN_EXPIRY)
         }
     )
 }
@@ -33,7 +33,7 @@ const generateAccessToken = async function (id) {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: ms(process.env.ACCESS_TOKEN_EXPIRY)
         }
     )
 }
@@ -44,8 +44,11 @@ const isPasswordCorrect = async function(password, DBpassword) {
 
 const register = asyncHandler( async(req, res) => {
 
-    const { username, email, password } = req.body
+    const { username, email, password, role } = req.body
     
+    console.log("username: ", username);
+    
+
     if(!username || !email || !password) {
         throw new ApiError(
             400,
@@ -54,7 +57,9 @@ const register = asyncHandler( async(req, res) => {
     }
     
     const existingUser = await prisma.user.findUnique({
-        where: {username: username.toLowerCase()}
+        where: {
+            email
+        }
     });
     
     if(existingUser) {
@@ -77,9 +82,14 @@ const register = asyncHandler( async(req, res) => {
             username,
             email,
             password: hashedPassword,
-            image: avatarUrl
+            image: avatarUrl,
+            role: role || "USER"
         }
     })
+
+    if(!user) {
+        throw new ApiError(400, "User not created")
+    }
 
     const createdUser = await prisma.user.findUnique({
         where: { id: user.id },
