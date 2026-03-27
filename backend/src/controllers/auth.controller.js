@@ -58,7 +58,7 @@ const register = asyncHandler( async(req, res) => {
     
     const existingUser = await prisma.user.findUnique({
         where: {
-            email
+            email: email
         }
     });
     
@@ -148,7 +148,7 @@ const login = asyncHandler( async(req, res) => {
     }
 
     const user = await prisma.user.findUnique({
-        where: {email}
+        where: {email: email}
     })
 
     if(!user) {

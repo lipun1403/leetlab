@@ -4,6 +4,9 @@ const sleep = (ms) =>
     new Promise(resolve => setTimeout(resolve, ms));
 
 export const getJudge0LangId = (language) => {
+    if(!language) console.log("Empty language");
+    
+
     const languageMap = {
         "JAVA": 62,       
         "PYTHON": 71,      
@@ -11,14 +14,15 @@ export const getJudge0LangId = (language) => {
         "CPP": 54  
     }
 
-    return languageMap[language.toUpperCase()]
+    return languageMap[language]
 }
 
 export const submitBatch = async(submissions) => {
-    const {data} = await axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false&wait=true`,{
-        submissions
-    })
+    const url = `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`
+    const { data } = await axios.post(url, { submissions })
 
+    console.log("Data: ", data);
+    
     return data
 }
 

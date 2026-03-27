@@ -21,8 +21,16 @@ const createProblem = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Every field is mandatory")
     }
 
-    for(const [lang, solutionCode] of Object.entries(referenceSolution)) {
-        const languageId = getJudge0LangId(lang)
+    
+
+    // for (const [language, solutionCode] of Object.entries(referenceSolution)) {
+    for (const obj of referenceSolution) {
+        const language = Object.keys(obj)[0];
+        const solutionCode = obj[language];
+
+        const languageId = getJudge0LangId(language);
+
+        console.log("Language:", language, "ID:", languageId);
 
         if(!languageId) {
             throw new ApiError(400, "Invalid language selection")
@@ -32,7 +40,7 @@ const createProblem = asyncHandler(async (req, res) => {
             source_code: solutionCode,
             language_id: languageId,
             stdin: input,
-            expected_output: output.trim()
+            expected_output: output
         }))
 
         const submissionResult = await submitBatch(submissions)
@@ -46,7 +54,7 @@ const createProblem = asyncHandler(async (req, res) => {
             if(results[i].status.id !== 3) {
                 throw new ApiError(
                     400, 
-                    `Language ${lang} failed on testcase ${i+1}: ${results[i].status.description}`
+                    `Language ${language} failed on testcase ${i+1}: ${results[i].status.description}`
                 )
             }
         }
