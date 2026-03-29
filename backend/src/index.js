@@ -4,6 +4,7 @@ import cors from "cors"
 import cookieparser from "cookie-parser"
 import authroute from "./routes/auth.routes.js"
 import problemRoute from "./routes/problem.routes.js"
+import executionRoute from "./routes/execute.route.js"
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authroute)
 app.use("/api/v1/problems", problemRoute)
+app.use("/api/v1/execution", executionRoute)
 
 app.listen(port, (req, res) => {
     console.log(`Server is running on port: ${port}`);

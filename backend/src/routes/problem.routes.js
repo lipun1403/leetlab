@@ -19,10 +19,10 @@ const problemRoute = express.Router()
 problemRoute.use(verifyJWT)
 
 problemRoute.post("/createProblem", checkAdmin, createProblem)
-problemRoute.put("/updateProblem/:id", checkAdmin, updateProblem)
+problemRoute.put("/updateProblem/:problemId", checkAdmin, updateProblem)
 problemRoute.get("/getAllProblems", getAllProblem)
-problemRoute.get("/getProblemById/:id", getProblemById)
-problemRoute.delete("/deleteProblem/:id", checkAdmin, deleteProblem)
+problemRoute.get("/getProblemById/:problemId", getProblemById)
+problemRoute.delete("/deleteProblem/:problemId", checkAdmin, deleteProblem)
 problemRoute.get("/getAllSolvedProblem", getAllSolvedProblem)
 
 
