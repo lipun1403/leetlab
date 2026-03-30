@@ -4,12 +4,58 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { prisma } from "../lib/prisma.ts"
 import asyncHandler from "../utils/asyncHandler.js";
 
-const run = asyncHandler((req, res) => {
-    const { stdin, expectedOutput, languageId, problemId, sourceCode } = req.body()
+const run = asyncHandler(async (req, res) => {
+    console.log("Body: ", req.body);
 
-    const userId = req.user.id
+    const { stdin, languageId, sourceCode } = req.body
+    
 
+    if( !Array.isArray(stdin) || stdin.length === 0) {
+        throw new ApiError(
+            400,
+            "Invalid or missing testcases!"
+        )
+    }
 
+    const submissions = stdin.map((input) => ({
+        source_code: sourceCode,
+        language_id: languageId,
+        stdin: input
+    }))
+
+    const submitResponse = await submitBatch(submissions)
+
+    const tokens = submitResponse.map((res) => res.token);
+
+    const results = await pollBatchResults(tokens)
+
+    console.log("Result: ", results)
+
+    const finalResult = results.map((result, i) => {
+        const stdout = result.stdout?.trim()
+
+        return {
+            testCase: i+1,
+            stdout,
+            stderr: result.stderr || null,
+            compiledOutput: result.compile_output || null,
+            status: result.status.description,
+            memory: result.memory ? `${result.memory} KB` : undefined,
+            time: result.time? `${result.time} s` : undefined
+        }
+    })
+
+    console.log("Final result: ", finalResult);
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                "Executed successfully",
+                finalResult
+            )
+        )
 })
 
 const submit = asyncHandler(async (req, res) => {

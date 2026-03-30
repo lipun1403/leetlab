@@ -298,7 +298,48 @@ const deleteProblem = asyncHandler(async (req, res) => {
 })
 
 const getAllSolvedProblem = asyncHandler(async (req, res) => {
-    
+    const userId = req.user.id
+
+    if(!userId) {
+        throw new ApiError(
+            400,
+            "Invalid user!"
+        )
+    }
+
+    const result = await prisma.problemSolved.findMany({
+        where: {
+            userId
+        },
+        select: {
+            problem: {
+                select: {
+                    title: true,
+                    difficulty: true,
+                    tags: true
+                }
+             }
+        }
+    })
+
+    if(!result) {
+        throw new ApiError(
+            400,
+            "Cannot fetch the solved problems!"
+        )
+    }
+
+    const solvedProblems = result.map((prob) => prob.problem)
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                "Solved problems fetched successfully!",
+                solvedProblems
+            )
+        )
 })
 
 export {
