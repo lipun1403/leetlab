@@ -31,15 +31,7 @@ const getAllSubmissions = asyncHandler( async(req, res) => {
         }
     })
 
-    if(!result) {
-        throw new ApiError(
-            400,
-            "Error fetching the submissions"
-        )
-    }
-
-    // const allSubmissions = result.map((r) => r.problem)
-
+    
     return res
         .status(200)
         .json(
@@ -53,6 +45,7 @@ const getAllSubmissions = asyncHandler( async(req, res) => {
 
 const getSubmissionsForProblem = asyncHandler( async(req, res) => {
     const { problemId } = req.params
+    const userId = req.user.id
 
     if(!problemId) {
         throw new ApiError(
@@ -63,7 +56,8 @@ const getSubmissionsForProblem = asyncHandler( async(req, res) => {
 
     const result = await prisma.submission.findMany({
         where: {
-            problemId
+            problemId,
+            userId
         },
         select: {
             language: true,
@@ -74,13 +68,7 @@ const getSubmissionsForProblem = asyncHandler( async(req, res) => {
         }
     })
 
-    if(!result) {
-        throw new ApiError(
-            400,
-            "Can't perform the task now, please try again later!"
-        )
-    }
-
+    
     return res
         .status(200)
         .json(
@@ -92,7 +80,7 @@ const getSubmissionsForProblem = asyncHandler( async(req, res) => {
         )
 })
 
-const getSubmissionCount = asyncHandler( async(req, res) => {
+const getSubmissionCountForProblem = asyncHandler( async(req, res) => {
     const userId = req.user.id
 
     if(!userId) {
@@ -104,7 +92,7 @@ const getSubmissionCount = asyncHandler( async(req, res) => {
 
     const result = await prisma.submission.count({
         where: {
-            userId
+            problemId
         }
     })
 
@@ -122,5 +110,5 @@ const getSubmissionCount = asyncHandler( async(req, res) => {
 export {
     getAllSubmissions,
     getSubmissionsForProblem,
-    getSubmissionCount
+    getSubmissionCountForProblem
 }
