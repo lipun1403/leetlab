@@ -17,6 +17,20 @@ export const getJudge0LangId = (language) => {
     return languageMap[language]
 }
 
+export const getJudge0LangName = (id) => {
+    if(!id) console.log("Empty language");
+    
+
+    const languageMap = {
+        62: "JAVA",       
+        71: "PYTHON",      
+        63: "JAVASCRIPT",  
+        54: "CPP"  
+    }
+
+    return languageMap[id]
+}
+
 export const submitBatch = async(submissions) => {
     const url = `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`
     const { data } = await axios.post(url, { submissions })
