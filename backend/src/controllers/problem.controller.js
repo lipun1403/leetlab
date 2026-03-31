@@ -311,25 +311,27 @@ const getAllSolvedProblem = asyncHandler(async (req, res) => {
         where: {
             userId
         },
+        orderBy: {
+            createdAt: "desc"
+        },
         select: {
+            problemId: true,
             problem: {
                 select: {
                     title: true,
                     difficulty: true,
                     tags: true
                 }
-             }
+            }
         }
     })
 
-    if(!result) {
-        throw new ApiError(
-            400,
-            "Cannot fetch the solved problems!"
-        )
-    }
-
-    const solvedProblems = result.map((prob) => prob.problem)
+    const solvedProblems = result.map((r) => ({
+        problemId: r.problemId,
+        title: r.problem.title,
+        difficulty: r.problem.difficulty,
+        tags: r.problem.tags
+    }))
 
     return res
         .status(200)
