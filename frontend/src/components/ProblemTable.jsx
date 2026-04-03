@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
 import { useActions } from "../store/useAction";
-import AddToPlaylistModal from "./AddToPlaylist";
-import CreatePlaylistModal from "./CreatePlaylistModal";
-import { usePlaylistStore } from "../store/usePlaylistStore";
+import AddToPlaylistModal from "./AddToPlaylist.jsx";
+import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
+import { usePlaylistStore } from "../store/usePlaylistStore.js";
 
 
 const ProblemsTable = ({ problems }) => {
