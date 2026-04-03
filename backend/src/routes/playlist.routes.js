@@ -1,5 +1,10 @@
 import express from "express";
-import { createPlaylist, deletePlaylist, getAllPlaylists, getPlaylistById, addToPlaylist, removeFromPlaylist, getAllListDetails } from "../controllers/playlist.controller.js";
+import { getAllListDetails,
+    createPlaylist, 
+    getPlaylistById, 
+    addToPlaylist,
+    removeFromPlaylist,
+    deletePlaylist } from "../controllers/playlist.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const playlistRoute = express.Router();

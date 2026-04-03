@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
-// import { AuthImagePattern } from "../components/AuthImagePattern.jsx"
+import CodeBackground from "../components/AuthImagePattern.jsx"
 import {
     Code,
     Eye,
@@ -175,7 +175,7 @@ const SignUpPage = () => {
       </div>
 
       {/* Right Side - Image/Pattern */}
-      <AuthImagePattern
+      <CodeBackground
         title={"Welcome to our platform!"}
         subtitle={
           "Sign up to access our platform and start using our services."

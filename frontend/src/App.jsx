@@ -8,6 +8,7 @@ import { Loader } from "lucide-react";
 import Layout from "./layout/Layout.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import AddProblem from "./page/AddProblem.jsx";
+import { useAuthStore } from "./store/useAuthStore.js";
 
 const App = () => {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();

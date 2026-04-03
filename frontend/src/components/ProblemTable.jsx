@@ -2,9 +2,9 @@ import React, { useState, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
-import { useActions } from "../store/useAction";
+import { useActions } from "../store/useAction.js";
 import AddToPlaylistModal from "./AddToPlaylist.jsx";
-import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
+import CreatePlaylistModal from "./CreatePlaylistModel.jsx";
 import { usePlaylistStore } from "../store/usePlaylistStore.js";
 
 

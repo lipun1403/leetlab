@@ -17,12 +17,12 @@ import {
   Home,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { useProblemStore } from "../store/useProblemStore";
-import { getLanguageId } from "../lib/lang";
-import { useExecutionStore } from "../store/useExecutionStore";
-import { useSubmissionStore } from "../store/useSubmissionStore";
-import Submission from "../components/Submission";
-import SubmissionsList from "../components/SubmissionList";
+import { useProblemStore } from "../store/useProblemStore.js";
+import { getLanguageId } from "../lib/lang.js";
+import { useExecutionStore } from "../store/useExecutionStore.js";
+import { useSubmissionStore } from "../store/useSubmissionStore.js";
+import Submission from "../components/Submission.jsx";
+import SubmissionsList from "../components/SubmissionList.jsx";
 
 const ProblemPage = () => {
   const { id } = useParams();
@@ -195,7 +195,7 @@ const ProblemPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 max-w-7xl w-full">
+    <div className="min-h-screen bg-linear-to-br from-base-300 to-base-200 max-w-7xl w-full">
       <nav className="navbar bg-base-100 shadow-lg px-4">
         <div className="flex-1 gap-2">
           <Link to={"/"} className="flex items-center gap-2 text-primary">
@@ -305,7 +305,7 @@ const ProblemPage = () => {
                 </button>
               </div>
 
-              <div className="h-[600px] w-full">
+              <div className="h-150 w-full">
                 <Editor
                   height="100%"
                   language={selectedLanguage.toLowerCase()}
