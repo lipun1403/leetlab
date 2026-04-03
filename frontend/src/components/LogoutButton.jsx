@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore.js";
 
 
 const LogoutButton = ({children})=>{
@@ -9,8 +9,6 @@ const LogoutButton = ({children})=>{
         await logout();
         
     }
-
-
 
     return (
         <button className="btn btn-primary" onClick={onLogout}> 

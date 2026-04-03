@@ -12,6 +12,7 @@ import {
     Mail
 } from "lucide-react"
 import { z } from "zod" 
+import { useAuthStore } from '../store/useAuthStore.js'
 
 const loginSchema = z.object({
   email: z.email("Invalid email address"),
@@ -20,6 +21,7 @@ const loginSchema = z.object({
 })
 
 const loginPage = () => {
+  const { login, isLoggingIn } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false)
   const {
     register,
@@ -29,11 +31,12 @@ const loginPage = () => {
     resolver: zodResolver(loginSchema),
   })
   const onSubmit = async (data) => {
-    console.log(data)
+    try {
+      await login(data);
+    } catch (error) {
+      console.error("Error logging in: ", error);
+    }
   }
-
-  
-
 
   return (
     <div className='h-screen grid lg:grid-cols-2'>
@@ -134,12 +137,12 @@ const loginPage = () => {
       </div>
 
       {/* Right Side - Image/Pattern */}
-      {/* <AuthImagePattern
+      <AuthImagePattern
         title={"Welcome back!"}
         subtitle={
           "Sign in to continue your journey with us. Don't have an account? Create one now."
         }
-      /> */}
+      />
     </div>
   )
 }

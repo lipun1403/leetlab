@@ -1,8 +1,9 @@
 import React from "react"
 import { User, Code, LogOut } from "lucide-react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "./LogoutButton.jsx";
+
 
 
 
