@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
@@ -17,7 +17,8 @@ import { useAuthStore } from '../store/useAuthStore.js'
 const signupSchema = z.object({
   email: z.email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
-  name: z.string().min(3, "Name must be at least 3 characters long"),
+  username: z.string().min(3, "Name must be at least 3 characters long"),
+  role: z.enum(["USER", "ADMIN"]).default("USER"),
 })
 
 const SignUpPage = () => {
@@ -31,6 +32,9 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      role: "USER",
+    },
   })
   const onSubmit = async(data) => {
     try {
@@ -55,8 +59,8 @@ const SignUpPage = () => {
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                 <Code className="w-6 h-6 text-primary" />
               </div>
-              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
-              <p className="text-base-content/60">Sign in to your account</p>
+              <h1 className="text-2xl font-bold mt-2">Welcome!</h1>
+              <p className="text-base-content/60">Create an account to get started</p>
             </div>
           </div>
 
@@ -66,7 +70,7 @@ const SignUpPage = () => {
             {/* name */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Name</span>
+                <span className="label-text font-medium">Username</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -74,7 +78,7 @@ const SignUpPage = () => {
                 </div>
                 <input
                   type="text"
-                  {...register("name")}
+                  {...register("username")}
                   className={`input input-bordered w-full pl-10 ${
                     errors.name ? "input-error" : ""
                   }`}
@@ -140,6 +144,25 @@ const SignUpPage = () => {
               </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* Role */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Role</span>
+              </label>
+
+              <select
+                {...register("role")}
+                className="select select-bordered w-full"
+              >
+                <option value="USER">User</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+
+              {errors.role && (
+                <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
               )}
             </div>
 

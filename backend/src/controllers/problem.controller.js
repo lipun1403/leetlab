@@ -17,16 +17,16 @@ const createProblem = asyncHandler(async (req, res) => {
         referenceSolution 
     } = req.body
 
-    if(!title || !description || !difficulty || !tags || !examples || !constraints || !testcases || !codeSnippets || !referenceSolution) {
-        throw new ApiError(400, "Every field is mandatory")
-    }
+    // if(!title || !description || !difficulty || !tags || !examples || !constraints || !testcases || !codeSnippets || !referenceSolution) {
+    //     throw new ApiError(400, "Every field is mandatory")
+    // }
 
     
 
-    // for (const [language, solutionCode] of Object.entries(referenceSolution)) {
-    for (const obj of referenceSolution) {
-        const language = Object.keys(obj)[0];
-        const solutionCode = obj[language];
+    for (const [language, solutionCode] of Object.entries(referenceSolution)) {
+    // for (const obj of referenceSolution) {
+        // const language = Object.keys(obj)[0];
+        // const solutionCode = obj[language];
 
         const languageId = getJudge0LangId(language);
 
@@ -48,10 +48,22 @@ const createProblem = asyncHandler(async (req, res) => {
         const tokens = submissionResult.map((res) => res.token) 
 
         const results = await pollBatchResults(tokens)
+
+        if (!results || results.length !== tokens.length) {
+            console.log("Tokens:", tokens);
+            console.log("Results:", results);
+
+            throw new ApiError(
+                500,
+                `Judge0 returned incomplete results for ${language}`
+            );
+        }
         
         for(let i=0;i<results.length;i++) {
             console.log(results[i]);
             if(results[i].status.id !== 3) {
+                console.log("Failed testcase:",testcases[i]);
+                
                 throw new ApiError(
                     400, 
                     `Language ${language} failed on testcase ${i+1}: ${results[i].status.description}`
@@ -167,8 +179,8 @@ const updateProblem = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(
             200,
-            "Problem updated successfully",
-            updatedProblem
+            updatedProblem,
+            "Problem updated successfully"
         )
     );
 });
@@ -176,6 +188,7 @@ const updateProblem = asyncHandler(async (req, res) => {
 const getAllProblem = asyncHandler(async (req, res) => {
     const problems = await prisma.problem.findMany({
         select: {
+            id: true,
             title: true,
             difficulty: true,
             tags: true
@@ -185,19 +198,17 @@ const getAllProblem = asyncHandler(async (req, res) => {
     if(problems.length === 0) {
         throw new ApiError(
             400,
-            "Cannot fetch thye problems"
+            "Cannot fetch problems"
         )
     }
-
-    console.log("All problems fetched successfully!");
     
     return res
         .status(200)
         .json(
             new ApiResponse(
                 200,
-                "Problems fetched successfully",
-                problems
+                problems,
+                "Problems fetched successfully"
             )
         )
 })
@@ -224,9 +235,11 @@ const getProblemById = asyncHandler(async (req, res) => {
             difficulty: true,
             tags: true,
             examples: true,
+            testcases:true,
             constraints: true,
             hints: true,
-            codeSnippets: true
+            codeSnippets: true,
+            createdAt: true
         }
     })
 
@@ -244,8 +257,8 @@ const getProblemById = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
+                problem,
                 "Problem fetched successfully",
-                problem
             )
         )
 })
@@ -291,8 +304,8 @@ const deleteProblem = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
+                problem,
                 "Problem deleted successfully!",
-                problem
             )
         )
 })
@@ -338,8 +351,8 @@ const getAllSolvedProblem = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
+                solvedProblems,
                 "Solved problems fetched successfully!",
-                solvedProblems
             )
         )
 })

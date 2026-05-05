@@ -8,6 +8,6 @@ submissionRoutes.use(verifyJWT)
 
 submissionRoutes.get("/getAllSubmissions", getAllSubmissions)
 submissionRoutes.get("/getSubmissionsForProblem/:problemId", getSubmissionsForProblem)
-submissionRoutes.get("/getSubmissionCount", getSubmissionCountForProblem)
+submissionRoutes.get("/getSubmissionCount/:problemId", getSubmissionCountForProblem)
 
 export default submissionRoutes

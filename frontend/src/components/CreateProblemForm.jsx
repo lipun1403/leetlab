@@ -62,7 +62,7 @@ const problemSchema = z.object({
     JAVA: z.string().min(1, "Java solution is required"),
     CPP: z.string().min(1, "C++ solution is required"),
   }),
-  referenceSolutions: z.object({
+  referenceSolution: z.object({
     JAVASCRIPT: z.string().min(1, "JavaScript solution is required"),
     PYTHON: z.string().min(1, "Python solution is required"),
     JAVA: z.string().min(1, "Java solution is required"),
@@ -208,176 +208,94 @@ const sampledpData = {
               return 0;
           }`
   },
-  referenceSolutions: {
-    JAVASCRIPT: `/**
-            * @param {number} n
-            * @return {number}
-            */
-            function climbStairs(n) {
-            // Base cases
-            if (n <= 2) {
-              return n;
-            }
+  referenceSolution: {
+  JAVA: `import java.util.*;
 
-            // Dynamic programming approach
-            let dp = new Array(n + 1);
-            dp[1] = 1;
-            dp[2] = 2;
+public class Main {
+    public static int climbStairs(int n) {
+        if (n <= 2) return n;
 
-            for (let i = 3; i <= n; i++) {
-              dp[i] = dp[i - 1] + dp[i - 2];
-            }
+        int a = 1, b = 2;
+        for (int i = 3; i <= n; i++) {
+            int temp = a + b;
+            a = b;
+            b = temp;
+        }
+        return b;
+    }
 
-            return dp[n];
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.nextLine().trim());
 
-            /* Alternative approach with O(1) space
-            let a = 1; // ways to climb 1 step
-            let b = 2; // ways to climb 2 steps
+        System.out.println(climbStairs(n));
+        sc.close();
+    }
+}`,
+  JAVASCRIPT: `/**
+ * @param {number} n
+ * @return {number}
+ */
+function climbStairs(n) {
+  if (n <= 2) return n;
 
-            for (let i = 3; i <= n; i++) {
-              let temp = a + b;
-              a = b;
-              b = temp;
-            }
+  let a = 1, b = 2;
+  for (let i = 3; i <= n; i++) {
+    let temp = a + b;
+    a = b;
+    b = temp;
+  }
+  return b;
+}
 
-            return n === 1 ? a : b;
-            */
-            }
+// ✅ Judge0-safe input handling
+const fs = require('fs');
+const input = fs.readFileSync(0, 'utf-8').trim();
+const n = parseInt(input);
 
-            // Parse input and execute
-            const readline = require('readline');
-            const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-            terminal: false
-            });
+console.log(climbStairs(n));`,
 
-            rl.on('line', (line) => {
-            const n = parseInt(line.trim());
-            const result = climbStairs(n);
+  PYTHON: `class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n <= 2:
+            return n
+        
+        a, b = 1, 2
+        for _ in range(3, n + 1):
+            a, b = b, a + b
+        
+        return b
 
-            console.log(result);
-            rl.close();
-            });`,
-    PYTHON: `class Solution:
-            def climbStairs(self, n: int) -> int:
-                # Base cases
-                if n <= 2:
-                    return n
-                
-                # Dynamic programming approach
-                dp = [0] * (n + 1)
-                dp[1] = 1
-                dp[2] = 2
-                
-                for i in range(3, n + 1):
-                    dp[i] = dp[i - 1] + dp[i - 2]
-                
-                return dp[n]
-                
-                # Alternative approach with O(1) space
-                # a, b = 1, 2
-                # 
-                # for i in range(3, n + 1):
-                #     a, b = b, a + b
-                # 
-                # return a if n == 1 else b
+if __name__ == "__main__":
+    import sys
+    n = int(sys.stdin.readline().strip())
+    
+    sol = Solution()
+    print(sol.climbStairs(n))`,
 
-          # Input parsing
-          if __name__ == "__main__":
-            import sys
-            
-            # Parse input
-            n = int(sys.stdin.readline().strip())
-            
-            # Solve
-            sol = Solution()
-            result = sol.climbStairs(n)
-            
-            # Print result
-            print(result)`,
-    JAVA: `import java.util.Scanner;
+  CPP: `#include <bits/stdc++.h>
+using namespace std;
 
-          class Main {
-            public int climbStairs(int n) {
-                // Base cases
-                if (n <= 2) {
-                    return n;
-                }
-                
-                // Dynamic programming approach
-                int[] dp = new int[n + 1];
-                dp[1] = 1;
-                dp[2] = 2;
-                
-                for (int i = 3; i <= n; i++) {
-                    dp[i] = dp[i - 1] + dp[i - 2];
-                }
-                
-                return dp[n];
-                
-                /* Alternative approach with O(1) space
-                int a = 1; // ways to climb 1 step
-                int b = 2; // ways to climb 2 steps
-                
-                for (int i = 3; i <= n; i++) {
-                    int temp = a + b;
-                    a = b;
-                    b = temp;
-                }
-                
-                return n == 1 ? a : b;
-                */
-            }
-            
-            public static void main(String[] args) {
-                Scanner scanner = new Scanner(System.in);
-                int n = Integer.parseInt(scanner.nextLine().trim());
-                
-                // Use Main class instead of Solution
-                Main main = new Main();
-                int result = main.climbStairs(n);
-                
-                System.out.println(result);
-                scanner.close();
-            }
-          }`,
-    CPP: `#include <bits/stdc++.h>
-          using namespace std;
+int climbStairs(int n) {
+    if (n <= 2) return n;
 
-          class Solution {
-          public:
-              int climbStairs(int n) {
-                  // Base cases
-                  if (n <= 2) {
-                      return n;
-                  }
+    int a = 1, b = 2;
+    for (int i = 3; i <= n; i++) {
+        int temp = a + b;
+        a = b;
+        b = temp;
+    }
+    return b;
+}
 
-                  // Dynamic Programming approach
-                  vector<int> dp(n + 1);
-                  dp[1] = 1;
-                  dp[2] = 2;
+int main() {
+    int n;
+    cin >> n;
 
-                  for (int i = 3; i <= n; i++) {
-                      dp[i] = dp[i - 1] + dp[i - 2];
-                  }
-
-                  return dp[n];
-              }
-          };
-
-          int main() {
-              int n;
-              cin >> n;
-
-              Solution sol;
-              int result = sol.climbStairs(n);
-
-              cout << result << endl;
-
-              return 0;
-          }`
-  },
+    cout << climbStairs(n) << endl;
+    return 0;
+}`
+}
 };
 
 // Sample problem data for another type of question
@@ -455,23 +373,21 @@ const sampleStringProblem = {
                   console.log(result ? "true" : "false");
                   rl.close();
                 });`,
-    PYTHON: `class Solution:
-                def isPalindrome(self, s: str) -> bool:
-                    # Write your code here
-                    pass
-            
-            # Input parsing
-            if __name__ == "__main__":
-                import sys
-                # Read the input string
-                s = sys.stdin.readline().strip()
-                
-                # Call solution
-                sol = Solution()
-                result = sol.isPalindrome(s)
-                
-                # Output result
-                print(str(result).lower())  # Convert True/False to lowercase true/false`,
+    PYTHON:`class Solution:
+      def isPalindrome(self, s: str) -> bool:
+        # Write your code here
+        filtered = [c.lower() for c in s if c.isalnum()]
+        return filtered == filtered[::-1]
+
+
+if __name__ == "__main__":
+  import sys
+  s = sys.stdin.readline().strip()
+  
+  sol = Solution()
+  result = sol.isPalindrome(s)
+  
+  print(str(result).lower())`,
     JAVA: `import java.util.Scanner;
 
           public class Main {
@@ -511,7 +427,35 @@ const sampleStringProblem = {
               return 0;
           }`
   },
-  referenceSolutions: {
+  referenceSolution: {
+    JAVA: `import java.util.Scanner;
+
+          public class Main {
+              public static String preprocess(String s) {
+                  return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+              }
+
+              public static boolean isPalindrome(String s) {
+                  s = preprocess(s);
+                  int left = 0, right = s.length() - 1;
+
+                  while (left < right) {
+                      if (s.charAt(left) != s.charAt(right)) return false;
+                      left++;
+                      right--;
+                  }
+
+                  return true;
+              }
+
+              public static void main(String[] args) {
+                  Scanner sc = new Scanner(System.in);
+                  String input = sc.nextLine();
+
+                  boolean result = isPalindrome(input);
+                  System.out.println(result ? "true" : "false");
+              }
+          }`,
     JAVASCRIPT: `/**
                 * @param {string} s
                 * @return {boolean}
@@ -553,53 +497,26 @@ const sampleStringProblem = {
                   rl.close();
                 });`,
     PYTHON: `class Solution:
-            def isPalindrome(self, s: str) -> bool:
-                # Convert to lowercase and keep only alphanumeric characters
-                filtered_chars = [c.lower() for c in s if c.isalnum()]
-                
-                # Check if it's a palindrome
-                return filtered_chars == filtered_chars[::-1]
+      def isPalindrome(self, s: str) -> bool:
+          # Convert to lowercase and keep only alphanumeric characters
+          filtered_chars = [c.lower() for c in s if c.isalnum()]
+          
+          # Check if it's a palindrome
+          return filtered_chars == filtered_chars[::-1]
         
-        # Input parsing
-        if __name__ == "__main__":
-            import sys
-            # Read the input string
-            s = sys.stdin.readline().strip()
-            
-            # Call solution
-            sol = Solution()
-            result = sol.isPalindrome(s)
-            
-            # Output result
-            print(str(result).lower())  # Convert True/False to lowercase true/false`,
-    JAVA: `import java.util.Scanner;
-
-          public class Main {
-              public static String preprocess(String s) {
-                  return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-              }
-
-              public static boolean isPalindrome(String s) {
-                  s = preprocess(s);
-                  int left = 0, right = s.length() - 1;
-
-                  while (left < right) {
-                      if (s.charAt(left) != s.charAt(right)) return false;
-                      left++;
-                      right--;
-                  }
-
-                  return true;
-              }
-
-              public static void main(String[] args) {
-                  Scanner sc = new Scanner(System.in);
-                  String input = sc.nextLine();
-
-                  boolean result = isPalindrome(input);
-                  System.out.println(result ? "true" : "false");
-              }
-          }`,
+# Input parsing
+if __name__ == "__main__":
+    import sys
+    # Read the input string
+    s = sys.stdin.readline().strip()
+    
+    # Call solution
+    sol = Solution()
+    result = sol.isPalindrome(s)
+    
+    # Output result
+    print(str(result).lower())  # Convert True/False to lowercase true/false`,
+    
     CPP: `#include <bits/stdc++.h>
           using namespace std;
 
@@ -659,10 +576,10 @@ const CreateProblemForm = () => {
               codeSnippets: {
                 JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
                 PYTHON: "def solution():\n    # Write your code here\n    pass",
-                JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+                JAVA:"public class Solution {\n    public int solve(int n) {\n        // Write your code here\n    }\n}",
                 CPP: "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    void solve() {\n        // Write your code here\n    }\n};"
               },
-              referenceSolutions: {
+              referenceSolution: {
                 JAVASCRIPT: "// Add your reference solution here",
                 PYTHON: "# Add your reference solution here",
                 JAVA: "// Add your reference solution here",
@@ -697,7 +614,7 @@ const CreateProblemForm = () => {
   const onSubmit = async (value)=>{
    try {
     setIsLoading(true)
-    const res = await axiosInstance.post("/problems/create-problem" , value)
+    const res = await axiosInstance.post("/problems/createProblem" , value)
     console.log(res.data);
     toast.success(res.data.message || "Problem Created successfully⚡");
     navigation("/");
@@ -962,7 +879,7 @@ const CreateProblemForm = () => {
 
             {/* Code Editor Sections */}
             <div className="space-y-8">
-              {["JAVASCRIPT", "PYTHON", "JAVA"].map((language) => (
+              {[ "JAVA","JAVASCRIPT", "PYTHON","CPP"].map((language) => (
                 <div
                   key={language}
                   className="card bg-base-200 p-4 md:p-6 shadow-md"
@@ -1021,7 +938,7 @@ const CreateProblemForm = () => {
                         </h4>
                         <div className="border rounded-md overflow-hidden">
                           <Controller
-                            name={`referenceSolutions.${language}`}
+                            name={`referenceSolution.${language}`}
                             control={control}
                             render={({ field }) => (
                               <Editor
@@ -1042,10 +959,10 @@ const CreateProblemForm = () => {
                             )}
                           />
                         </div>
-                        {errors.referenceSolutions?.[language] && (
+                        {errors.referenceSolution?.[language] && (
                           <div className="mt-2">
                             <span className="text-error text-sm">
-                              {errors.referenceSolutions[language].message}
+                              {errors.referenceSolution[language].message}
                             </span>
                           </div>
                         )}

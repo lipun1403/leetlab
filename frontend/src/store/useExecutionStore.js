@@ -1,34 +1,76 @@
-import {create} from "zustand";
+import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
+export const useExecutionStore = create((set) => ({
+  isExecuting: false,
+  isRunning: false,
 
+  submission: null,
+  runResult: null,
 
-export const useExecutionStore = create((set)=>({
-    isExecuting:false,
-    submission:null,
+  // 🔹 RUN CODE (only executes, no validation)
+  runCode: async (sourceCode, languageId, stdin) => {
+    try {
+      set({ isRunning: true });
 
-       executeCode:async ( source_code, language_id, stdin, expected_outputs, problemId)=>{
-        try {
-            set({isExecuting:true});
-            console.log("Submission:",JSON.stringify({
-                source_code,
-                language_id,
-                stdin,
-                expected_outputs,
-                problemId
-            }));
-            const res = await axiosInstance.post("/execute-code" , { source_code, language_id, stdin, expected_outputs, problemId });
+      const payload = {
+        sourceCode,
+        languageId,
+        stdin,
+      };
 
-            set({submission:res.data.submission});
+      console.log("Run Code Payload:", payload);
+
+      const res = await axiosInstance.post("/execution/run", payload);
+
+      console.log("Returned data: ", res.data);
       
-            toast.success(res.data.message);
-        } catch (error) {
-            console.log("Error executing code",error);
-            toast.error("Error executing code");
-        }
-        finally{
-            set({isExecuting:false});
-        }
+      set({ runResult: res.data.data });
+
+      toast.success("Code executed successfully");
+    } catch (error) {
+      console.log("Error running code", error);
+      toast.error("Error running code");
+    } finally {
+      set({ isRunning: false });
     }
-}))
+  },
+
+  // 🔹 EXECUTE CODE (run + compare with expected output)
+  executeCode: async (
+    sourceCode,
+    languageId,
+    stdin,
+    expectedOutput,
+    problemId
+  ) => {
+    try {
+      set({ isExecuting: true });
+
+      const payload = {
+        sourceCode,
+        languageId,
+        stdin,
+        expectedOutput,
+        problemId,
+      };
+
+      console.log("Execute Code Payload:", payload);
+
+      const res = await axiosInstance.post("/execution/submit", payload);
+
+      console.log("Returned data: ", res.data);
+
+      set({ submission: res.data.data });
+
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log("Error executing code", error);
+      toast.error("Error executing code");
+    } finally {
+      set({ isExecuting: false });
+    }
+  },
+
+}));

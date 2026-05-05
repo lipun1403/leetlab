@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, replace } from 'react-router-dom'
 import CodeBackground from "../components/AuthImagePattern.jsx"
 
 import {
@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { z } from "zod" 
 import { useAuthStore } from '../store/useAuthStore.js'
+import { useNavigate } from 'react-router-dom'
 
 
 const loginSchema = z.object({
@@ -22,9 +23,7 @@ const loginSchema = z.object({
   // name: z.string().min(3, "Name must be at least 3 characters long"),
 })
 
-const loginPage = () => {
-  // const navigate = useNavigate();
-  const { login, isLoggingIn } = useAuthStore();
+const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const {
     register,
@@ -33,6 +32,18 @@ const loginPage = () => {
   } = useForm({
     resolver: zodResolver(loginSchema),
   })
+
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const isLoggingIn = useAuthStore((state) => state.isLoggingIn);
+  const authUser = useAuthStore((state) => state.authUser);
+
+  useEffect(() => {
+    console.log("authUser changed:", authUser);
+    if (authUser) {
+      navigate("/");
+    }
+  }, [authUser]);
   const onSubmit = async (data) => {
     try {
       await login(data);
@@ -121,9 +132,16 @@ const loginPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full"
-              
+              disabled={isLoggingIn}
             >
-              Login
+               {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 
@@ -150,4 +168,4 @@ const loginPage = () => {
   )
 }
 
-export default loginPage
+export default LoginPage

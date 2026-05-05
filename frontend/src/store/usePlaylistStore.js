@@ -12,7 +12,7 @@ export const usePlaylistStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await axiosInstance.post(
-        "/playlist/create-playlist",
+        "/playlist/createPlaylist",
         playlistData
       );
 
@@ -35,7 +35,9 @@ export const usePlaylistStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await axiosInstance.get("/playlist");
-      set({ playlists: response.data.playLists });
+      console.log("All playlists: ", response.data);
+      
+      set({ playlists: response.data.data });
     } catch (error) {
       console.error("Error fetching playlists:", error);
       toast.error("Failed to fetch playlists");
@@ -60,7 +62,7 @@ export const usePlaylistStore = create((set, get) => ({
   addProblemToPlaylist: async (playlistId, problemIds) => {
     try {
       set({ isLoading: true });
-      await axiosInstance.post(`/playlist/${playlistId}/add-problem`, {
+      await axiosInstance.post(`/playlist/${playlistId}/addToPlaylist`, {
         problemIds,
       });
 
@@ -81,7 +83,8 @@ export const usePlaylistStore = create((set, get) => ({
   removeProblemFromPlaylist: async (playlistId, problemIds) => {
     try {
       set({ isLoading: true });
-      await axiosInstance.post(`/playlist/${playlistId}/remove-problems`, {
+      await axiosInstance.post(`/playlist/${playlistId}/removeFromPlaylist
+        `, {
         problemIds,
       });
 

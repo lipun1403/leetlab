@@ -9,11 +9,11 @@ export const useActions = create((set)=>({
 
     onDeleteProblem:async(id)=>{
         try {
-             set({ isDeletingProblem: true });
-            const res = await axiosInstance.delete(`/problems/delete-problem/${id}`);
+            set({ isDeletingProblem: true });
+            const res = await axiosInstance.delete(`/problems/deleteProblem/${id}`);
             toast.success(res.data.message);
         } catch (error) {
-             console.log("Error deleting problem", error);
+            console.log("Error deleting problem", error);
             toast.error("Error deleting problem");
         }
         finally{

@@ -97,7 +97,7 @@ const ProblemsTable = ({ problems }) => {
           onChange={(e) => setDifficulty(e.target.value)}
         >
           <option value="ALL">All Difficulties</option>
-          {difficulties.map((diff) => (
+          {difficulties?.map((diff) => (
             <option key={diff} value={diff}>
               {diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase()}
             </option>
@@ -109,7 +109,7 @@ const ProblemsTable = ({ problems }) => {
           onChange={(e) => setSelectedTag(e.target.value)}
         >
           <option value="ALL">All Tags</option>
-          {allTags.map((tag) => (
+          {allTags?.map((tag) => (
             <option key={tag} value={tag}>
               {tag}
             </option>
@@ -131,10 +131,11 @@ const ProblemsTable = ({ problems }) => {
           </thead>
           <tbody>
             {paginatedProblems.length > 0 ? (
-              paginatedProblems.map((problem) => {
-                const isSolved = problem.solvedBy.some(
+              paginatedProblems?.map((problem) => {
+                const isSolved = problem.solvedBy?.some(
                   (user) => user.userId === authUser?.id
-                );
+                ) || false;
+                console.log("Problem: ", problem); 
                 return (
                   <tr key={problem.id}>
                     <td>
@@ -147,6 +148,7 @@ const ProblemsTable = ({ problems }) => {
                     </td>
                     <td>
                       <Link to={`/problem/${problem.id}`} className="font-semibold hover:underline">
+                      
                         {problem.title}
                       </Link>
                     </td>

@@ -13,9 +13,10 @@ export const useProblemStore = create((set) => ({
     try {
       set({ isProblemsLoading: true });
 
-      const res = await axiosInstance.get("/problems/get-all-problems");
-
-      set({ problems: res.data.problems });
+      const res = await axiosInstance.get("/problems/getAllProblems");
+      console.log(res.data);
+      
+      set({ problems: res.data.data });
     } catch (error) {
       console.log("Error getting all problems", error);
       toast.error("Error in getting problems");
@@ -28,14 +29,26 @@ export const useProblemStore = create((set) => ({
     try {
       set({ isProblemLoading: true });
 
-      const res = await axiosInstance.get(`/problems/get-problem/${id}`);
+      const res = await axiosInstance.get(`/problems/getProblemById/${id}`);
 
-      set({ problem: res.data.problem });
-    
-      toast.success(res.data.message);
+      const data = res.data.data;
+
+      // 🔥 convert array → object HERE (only once)
+      const snippetsObj = {};
+      (data.codeSnippets || []).forEach((item) => {
+        const key = Object.keys(item)[0].toLowerCase();
+        snippetsObj[key] = item[Object.keys(item)[0]];
+      });
+
+      set({
+        problem: {
+          ...data,
+          codeSnippets: snippetsObj,
+        },
+      });
+
     } catch (error) {
-      console.log("Error getting all problems", error);
-      toast.error("Error in getting problems");
+      console.log("Error getting problem", error);
     } finally {
       set({ isProblemLoading: false });
     }
@@ -43,9 +56,10 @@ export const useProblemStore = create((set) => ({
 
   getSolvedProblemByUser: async () => {
     try {
-      const res = await axiosInstance.get("/problems/get-solved-problem");
+      const res = await axiosInstance.get("/problems/getAllSolvedProblem");
 
-      set({ solvedProblems: res.data.problems });
+      console.log("Solved problems: ", res.data);
+      set({ solvedProblems: res.data.data });
     } catch (error) {
       console.log("Error getting solved problems", error);
       toast.error("Error getting solved problems");

@@ -37,8 +37,8 @@ const getAllSubmissions = asyncHandler( async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                result,
                 "All submissions fethced successfully",
-                result
             )
         )
 })
@@ -74,14 +74,15 @@ const getSubmissionsForProblem = asyncHandler( async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                result,
                 "All submissions for the problem is fetched",
-                result
             )
         )
 })
 
 const getSubmissionCountForProblem = asyncHandler( async(req, res) => {
     const userId = req.user.id
+    const problemId = req.query.problemId
 
     if(!userId) {
         throw new ApiError(
@@ -101,8 +102,8 @@ const getSubmissionCountForProblem = asyncHandler( async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                result,
                 "Submission count fetched successfully",
-                result
             )
         )
 })

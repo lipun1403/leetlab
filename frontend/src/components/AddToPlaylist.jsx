@@ -12,6 +12,10 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    console.log("Playlists:", playlists);
+  }, [playlists]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPlaylist) return;
@@ -44,7 +48,9 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
               disabled={isLoading}
             >
               <option value="">Select a playlist</option>
-              {playlists.map((playlist) => (
+              {/* console.log("Playlist(AddToPlaylist): ", playlists); */}
+              
+              {playlists?.map((playlist) => (
                 <option key={playlist.id} value={playlist.id}>
                   {playlist.name}
                 </option>

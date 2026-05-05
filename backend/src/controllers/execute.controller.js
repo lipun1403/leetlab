@@ -52,8 +52,8 @@ const run = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
+                finalResult,
                 "Executed successfully",
-                finalResult
             )
         )
 })
@@ -171,8 +171,8 @@ const submit = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
+                submissionWithTestcase,
                 "Executed successfully",
-                submissionWithTestcase
             )
         )
 })

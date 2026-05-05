@@ -49,11 +49,29 @@ const ProblemPage = () => {
     getSubmissionCountForProblem(id);
   }, [id]);
 
+  // useEffect(() => {
+  //   if (problem) {
+  //     setCode(
+  //       problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
+  //     );
+  //     setTestCases(
+  //       problem.testcases?.map((tc) => ({
+  //         input: tc.input,
+  //         output: tc.output,
+  //       })) || []
+  //     );
+  //   }
+  // }, [problem, selectedLanguage]);
+
+
   useEffect(() => {
     if (problem) {
       setCode(
-        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
+        problem.codeSnippets?.[selectedLanguage] ||
+        submission?.sourceCode ||
+        ""
       );
+
       setTestCases(
         problem.testcases?.map((tc) => ({
           input: tc.input,
@@ -69,7 +87,7 @@ const ProblemPage = () => {
     }
   }, [activeTab, id]);
 
-  console.log("submission", submissions);
+  console.log("submission: ", submission);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -79,13 +97,57 @@ const ProblemPage = () => {
 
   const handleRunCode = (e) => {
     e.preventDefault();
+
     try {
-      const language_id = getLanguageId(selectedLanguage);
-      const stdin = problem.testcases.map((tc) => tc.input);
-      const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
+      const languageId = getLanguageId(selectedLanguage);
+      const langKey = selectedLanguage.toUpperCase();
+
+      let stdin = [];
+      let expectedOutput = [];
+
+      // ✅ extract only selected language examples
+      problem.examples?.forEach((ex) => {
+        if (ex[langKey]) {
+          stdin.push(ex[langKey].input);
+          expectedOutput.push(ex[langKey].output);
+        }
+      });
+
+      console.log("RUN stdin:", stdin);
+      console.log("RUN expectedOutput:", expectedOutput);
+
+      if (stdin.length === 0) {
+        alert(`No examples available for ${selectedLanguage}`);
+        return;
+      }
+
+      executeCode(code, languageId, stdin, expectedOutput, id);
     } catch (error) {
       console.log("Error executing code", error);
+    }
+  };
+
+  const handleSubmitCode = () => {
+    try {
+      const languageId = getLanguageId(selectedLanguage);
+
+      const testcases = problem.testcases || [];
+
+      const stdin = testcases.map((tc) => tc.input);
+      const expectedOutput = testcases.map((tc) => tc.output);
+
+      console.log("SUBMIT stdin:", stdin);
+      console.log("SUBMIT expectedOutput:", expectedOutput);
+
+      if (stdin.length === 0) {
+        alert("No testcases available for submission");
+        return;
+      }
+
+      executeCode(code, languageId, stdin, expectedOutput, id);
+
+    } catch (error) {
+      console.log("Error submitting code", error);
     }
   };
 
@@ -107,7 +169,119 @@ const ProblemPage = () => {
           <div className="prose max-w-none">
             <p className="text-lg mb-6">{problem.description}</p>
 
-            {problem.examples && (
+            {problem?.examples && (
+              (() => {
+                const exampleObj = problem.examples.find(
+                  (ex) => ex[selectedLanguage.toUpperCase()]
+                );
+
+                const example = exampleObj
+                  ? exampleObj[selectedLanguage.toUpperCase()]
+                  : null;
+
+                if (!example) {
+                  return (
+                    <div className="text-gray-400 mt-4">
+                      No example available for {selectedLanguage}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold mb-4">
+                      Example ({selectedLanguage})
+                    </h3>
+
+                    <div className="bg-base-200 p-6 rounded-xl font-mono">
+
+                      {/* INPUT */}
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 font-semibold">
+                          Input:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg text-white">
+                          {example.input}
+                        </span>
+                      </div>
+
+                      {/* OUTPUT */}
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 font-semibold">
+                          Output:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg text-white">
+                          {example.output}
+                        </span>
+                      </div>
+
+                      {/* EXPLANATION */}
+                      {example.explanation && (
+                        <div>
+                          <div className="text-emerald-300 mb-2 font-semibold">
+                            Explanation:
+                          </div>
+                          <p>{example.explanation}</p>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                );
+              })()
+            )}
+
+
+            {/* {Array.isArray(problem.examples) && problem.examples.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mb-4">Examples:</h3>
+
+                {problem.examples.map((exampleObj, idx) => {
+                  const [lang, example] = Object.entries(exampleObj)[0];
+
+                  return (
+                    <div
+                      key={idx}
+                      className="bg-base-200 p-6 rounded-xl mb-6 font-mono"
+                    >
+                      <div className="mb-2 text-yellow-400 font-bold">
+                        {lang}
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 font-semibold">
+                          Input:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg text-white">
+                          {example.input}
+                        </span>
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 font-semibold">
+                          Output:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg text-white">
+                          {example.output}
+                        </span>
+                      </div>
+
+                      {example.explanation && (
+                        <div>
+                          <div className="text-emerald-300 mb-2 font-semibold">
+                            Explanation:
+                          </div>
+                          <p>{example.explanation}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )} */}
+            
+            
+            {/* {problem.examples && (
               <>
                 <h3 className="text-xl font-bold mb-4">Examples:</h3>
                 {Object.entries(problem.examples).map(
@@ -146,7 +320,7 @@ const ProblemPage = () => {
                   )
                 )}
               </>
-            )}
+            )} */}
 
             {problem.constraints && (
               <>
@@ -193,6 +367,8 @@ const ProblemPage = () => {
         return null;
     }
   };
+
+  console.log("codeSnippets:", problem.codeSnippets);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-base-300 to-base-200 max-w-7xl w-full">
@@ -336,7 +512,7 @@ const ProblemPage = () => {
                     {!isExecuting && <Play className="w-4 h-4" />}
                     Run Code
                   </button>
-                  <button className="btn btn-success gap-2">
+                  <button className="btn btn-success gap-2" onClick={handleSubmitCode}>
                     Submit Solution
                   </button>
                 </div>

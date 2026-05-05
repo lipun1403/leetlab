@@ -31,8 +31,8 @@ const getAllListDetails = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                details,
                 "All playlists fetched successfully",
-                details
             )
         )
 })
@@ -84,8 +84,8 @@ const createPlaylist = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                playlist,
                 "Playlist created successfully",
-                playlist
             )
         )
 })
@@ -136,8 +136,8 @@ const getPlaylistById = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                playlist,
                 "Playlist fetched successfully",
-                playlist
             )
         )
 })
@@ -181,8 +181,8 @@ const addToPlaylist = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                addedPlaylist,
                 "Problem(s) added successfully",
-                addedPlaylist
             )
         )
 })
@@ -241,8 +241,8 @@ const removeFromPlaylist = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                deletedPlaylist,
                 "Problem(s) removed successfully",
-                deletedPlaylist
             )
         )
 })
@@ -281,8 +281,8 @@ const deletePlaylist = asyncHandler(async(req, res) => {
         .json(
             new ApiResponse(
                 200,
+                deletedPlaylist,
                 "Playlist deleted successfully",
-                deletedPlaylist
             )
         )
 })
