@@ -1,26 +1,299 @@
-import React, { useState, useMemo } from "react";
-import { useAuthStore } from "../store/useAuthStore.js";
-import { Link } from "react-router-dom";
-import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
-import { useActions } from "../store/useAction.js";
-import AddToPlaylistModal from "./AddToPlaylist.jsx";
-import CreatePlaylistModal from "./CreatePlaylistModel.jsx";
-import { usePlaylistStore } from "../store/usePlaylistStore.js";
+// import React, { useState, useMemo } from "react";
+// import { useAuthStore } from "../store/useAuthStore.js";
+// import { Link } from "react-router-dom";
+// import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
+// import { useActions } from "../store/useAction.js";
+// import AddToPlaylistModal from "./AddToPlaylist.jsx";
+// import CreatePlaylistModal from "./CreatePlaylistModel.jsx";
+// import { usePlaylistStore } from "../store/usePlaylistStore.js";
 
 
-const ProblemsTable = ({ problems }) => {
+// const ProblemsTable = ({ problems }) => {
+//   const { authUser } = useAuthStore();
+//   const { onDeleteProblem } = useActions();
+//   const { createPlaylist } = usePlaylistStore();
+//   const [search, setSearch] = useState("");
+//   const [difficulty, setDifficulty] = useState("ALL");
+//   const [selectedTag, setSelectedTag] = useState("ALL");
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+//   const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] = useState(false);
+//   const [selectedProblemId, setSelectedProblemId] = useState(null);
+
+//   // Extract all unique tags from problems
+//   const allTags = useMemo(() => {
+//     if (!Array.isArray(problems)) return [];
+//     const tagsSet = new Set();
+//     problems.forEach((p) => p.tags?.forEach((t) => tagsSet.add(t)));
+//     return Array.from(tagsSet);
+//   }, [problems]);
+
+//   // Define allowed difficulties
+//   const difficulties = ["EASY", "MEDIUM", "HARD"];
+
+//   // Filter problems based on search, difficulty, and tags
+//   const filteredProblems = useMemo(() => {
+//     return (problems || [])
+//       .filter((problem) =>
+//         problem.title.toLowerCase().includes(search.toLowerCase())
+//       )
+//       .filter((problem) =>
+//         difficulty === "ALL" ? true : problem.difficulty === difficulty
+//       )
+//       .filter((problem) =>
+//         selectedTag === "ALL" ? true : problem.tags?.includes(selectedTag)
+//       );
+//   }, [problems, search, difficulty, selectedTag]);
+
+//   // Pagination logic
+//   const itemsPerPage = 5;
+//   const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
+//   const paginatedProblems = useMemo(() => {
+//     return filteredProblems.slice(
+//       (currentPage - 1) * itemsPerPage,
+//       currentPage * itemsPerPage
+//     );
+//   }, [filteredProblems, currentPage]);
+
+//   const handleDelete = (id) => {
+//     onDeleteProblem(id);
+//   };
+
+//   const handleCreatePlaylist = async (data) => {
+//     await createPlaylist(data);
+//   };
+
+//   const handleAddToPlaylist = (problemId) => {
+//     setSelectedProblemId(problemId);
+//     setIsAddToPlaylistModalOpen(true);
+//   };
+
+//   return (
+//     <div className="w-full max-w-6xl mx-auto mt-10">
+//       {/* Header with Create Playlist Button */}
+//       <div className="flex justify-between items-center mb-6">
+//         <h2 className="text-2xl font-bold">Problems</h2>
+//         <button
+//           className="btn btn-primary gap-2"
+//           onClick={() => setIsCreateModalOpen(true)}
+//         >
+//           <Plus className="w-4 h-4" />
+//           Create Playlist
+//         </button>
+//       </div>
+
+//       {/* Filters */}
+//       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+//         <input
+//           type="text"
+//           placeholder="Search by title"
+//           className="input input-bordered w-full md:w-1/3 bg-base-200"
+//           value={search}
+//           onChange={(e) => setSearch(e.target.value)}
+//         />
+//         <select
+//           className="select select-bordered bg-base-200"
+//           value={difficulty}
+//           onChange={(e) => setDifficulty(e.target.value)}
+//         >
+//           <option value="ALL">All Difficulties</option>
+//           {difficulties?.map((diff) => (
+//             <option key={diff} value={diff}>
+//               {diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase()}
+//             </option>
+//           ))}
+//         </select>
+//         <select
+//           className="select select-bordered bg-base-200"
+//           value={selectedTag}
+//           onChange={(e) => setSelectedTag(e.target.value)}
+//         >
+//           <option value="ALL">All Tags</option>
+//           {allTags?.map((tag) => (
+//             <option key={tag} value={tag}>
+//               {tag}
+//             </option>
+//           ))}
+//         </select>
+//       </div>
+
+//       {/* Table */}
+//       <div className="overflow-x-auto rounded-xl shadow-md">
+//         <table className="table table-zebra table-lg bg-base-200 text-base-content">
+//           <thead className="bg-base-300">
+//             <tr>
+//               <th>Solved</th>
+//               <th>Title</th>
+//               <th>Tags</th>
+//               <th>Difficulty</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {paginatedProblems.length > 0 ? (
+//               paginatedProblems?.map((problem) => {
+//                 const isSolved = problem.solvedBy?.some(
+//                   (user) => user.userId === authUser?.id
+//                 ) || false;
+//                 console.log("Problem: ", problem); 
+//                 return (
+//                   <tr key={problem.id}>
+//                     <td>
+//                       <input
+//                         type="checkbox"
+//                         checked={isSolved}
+//                         readOnly
+//                         className="checkbox checkbox-sm"
+//                       />
+//                     </td>
+//                     <td>
+//                       <Link to={`/problem/${problem.id}`} className="font-semibold hover:underline">
+                      
+//                         {problem.title}
+//                       </Link>
+//                     </td>
+//                     <td>
+//                       <div className="flex flex-wrap gap-1">
+//                         {(problem.tags || []).map((tag, idx) => (
+//                           <span
+//                             key={idx}
+//                             className="badge badge-outline badge-warning text-xs font-bold"
+//                           >
+//                             {tag}
+//                           </span>
+//                         ))}
+//                       </div>
+//                     </td>
+//                     <td>
+//                       <span
+//                         className={`badge font-semibold text-xs text-white ${
+//                           problem.difficulty === "EASY"
+//                             ? "badge-success"
+//                             : problem.difficulty === "MEDIUM"
+//                             ? "badge-warning"
+//                             : "badge-error"
+//                         }`}
+//                       >
+//                         {problem.difficulty}
+//                       </span>
+//                     </td>
+//                     <td>
+//                       <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
+//                         {authUser?.role === "ADMIN" && (
+//                           <div className="flex gap-2">
+//                             <button
+//                               onClick={() => handleDelete(problem.id)}
+//                               className="btn btn-sm btn-error"
+//                             >
+//                               <TrashIcon className="w-4 h-4 text-white" />
+//                             </button>
+//                             <button disabled className="btn btn-sm btn-warning">
+//                               <PencilIcon className="w-4 h-4 text-white" />
+//                             </button>
+//                           </div>
+//                         )}
+//                         <button
+//                           className="btn btn-sm btn-outline flex gap-2 items-center"
+//                           onClick={() => handleAddToPlaylist(problem.id)}
+//                         >
+//                           <Bookmark className="w-4 h-4" />
+//                           <span className="hidden sm:inline">Save to Playlist</span>
+//                         </button>
+//                       </div>
+//                     </td>
+//                   </tr>
+//                 );
+//               })
+//             ) : (
+//               <tr>
+//                 <td colSpan={5} className="text-center py-6 text-gray-500">
+//                   No problems found.
+//                 </td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* Pagination */}
+//       <div className="flex justify-center mt-6 gap-2">
+//         <button
+//           className="btn btn-sm"
+//           disabled={currentPage === 1}
+//           onClick={() => setCurrentPage((prev) => prev - 1)}
+//         >
+//           Prev
+//         </button>
+//         <span className="btn btn-ghost btn-sm">
+//           {currentPage} / {totalPages}
+//         </span>
+//         <button
+//           className="btn btn-sm"
+//           disabled={currentPage === totalPages}
+//           onClick={() => setCurrentPage((prev) => prev + 1)}
+//         >
+//           Next
+//         </button>
+//       </div>
+
+//       {/* Modals */}
+//       <CreatePlaylistModal
+//         isOpen={isCreateModalOpen}
+//         onClose={() => setIsCreateModalOpen(false)}
+//         onSubmit={handleCreatePlaylist}
+//       />
+      
+//       <AddToPlaylistModal
+//         isOpen={isAddToPlaylistModalOpen}
+//         onClose={() => setIsAddToPlaylistModalOpen(false)}
+//         problemId={selectedProblemId}
+//       />
+//     </div>
+//   );
+// };
+
+// export default ProblemsTable;
+
+
+
+import React, { useState, useMemo, useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore";
+import { Link, useNavigate } from "react-router-dom";
+import { usePlayListStore } from "../store/usePlayListStore";
+import {
+  Bookmark,
+  PencilIcon,
+  RotateCcw,
+  X,
+  TrashIcon,
+  Plus,
+  Info,
+} from "lucide-react";
+import CreatePlayListModel from "../components/CreatePlayListModel";
+import EditProblemModal from "./EditProblemModal";
+import AddToPlayListModel from "../components/AddToPlayListModel";
+import { useProblemStore } from "../store/useProblemStore";
+
+const ProblemTable = ({ problems, sidebarCompany }) => {
   const { authUser } = useAuthStore();
-  const { onDeleteProblem } = useActions();
-  const { createPlaylist } = usePlaylistStore();
+  const { createPlayList } = usePlayListStore();
+  const { deleteProblem } = useProblemStore();
+  const [isCreateModelOpen, setIsCreateModelOpen] = useState(false);
+  const [isAddToPlayListModelOpen, setIsAddToPlayListModelOpen] =
+    useState(false);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
+  const [selectedCompany, setSelectedCompany] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] = useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
+  const [showDeletedModel, setShowDeletedModel] = useState(false);
+  const [deletedProblemId, setDeletedProblemId] = useState(null);
+  const [editedProblemId, setEditedProblemId] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const difficulties = ["EASY", "MEDIUM", "HARD"];
 
-  // Extract all unique tags from problems
   const allTags = useMemo(() => {
     if (!Array.isArray(problems)) return [];
     const tagsSet = new Set();
@@ -28,114 +301,208 @@ const ProblemsTable = ({ problems }) => {
     return Array.from(tagsSet);
   }, [problems]);
 
-  // Define allowed difficulties
-  const difficulties = ["EASY", "MEDIUM", "HARD"];
+  const allCompanyTags = useMemo(() => {
+    if (!Array.isArray(problems)) return [];
+    const companyTagsSet = new Set();
+    problems.forEach((p) =>
+      p.companyTags?.forEach((t) => companyTagsSet.add(t)),
+    );
+    return Array.from(companyTagsSet);
+  }, [problems]);
 
-  // Filter problems based on search, difficulty, and tags
   const filteredProblems = useMemo(() => {
     return (problems || [])
       .filter((problem) =>
-        problem.title.toLowerCase().includes(search.toLowerCase())
+        problem.title.toLowerCase().includes(search.toLowerCase()),
       )
       .filter((problem) =>
-        difficulty === "ALL" ? true : problem.difficulty === difficulty
+        difficulty === "ALL" ? true : problem.difficulty === difficulty,
       )
       .filter((problem) =>
-        selectedTag === "ALL" ? true : problem.tags?.includes(selectedTag)
+        selectedTag === "ALL" ? true : problem.tags?.includes(selectedTag),
+      )
+      .filter((problem) =>
+        selectedCompany === "ALL"
+          ? true
+          : problem.companyTags?.includes(selectedCompany),
       );
-  }, [problems, search, difficulty, selectedTag]);
+  }, [problems, search, difficulty, selectedTag, selectedCompany]);
 
-  // Pagination logic
-  const itemsPerPage = 5;
+  const itemsPerPage = 12;
   const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
   const paginatedProblems = useMemo(() => {
     return filteredProblems.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
+      (currentPage - 1) * itemsPerPage, // 1 * 5 = 5 ( starting index = 0)
+      currentPage * itemsPerPage, // 1 * 5  = (0 , 10)
     );
   }, [filteredProblems, currentPage]);
 
   const handleDelete = (id) => {
-    onDeleteProblem(id);
+    setDeletedProblemId(id);
+    setShowDeletedModel(true);
   };
+  const handleSureDelete = async () => {
+    deleteProblem(deletedProblemId);
+    setShowDeletedModel(false);
+  };
+  const handleModalClose = () => setShowDeletedModel(false);
 
-  const handleCreatePlaylist = async (data) => {
-    await createPlaylist(data);
+  const handleEditProblem = (id) => {
+    setEditedProblemId(id);
+    setIsEditModalOpen(true);
   };
 
   const handleAddToPlaylist = (problemId) => {
     setSelectedProblemId(problemId);
-    setIsAddToPlaylistModalOpen(true);
+    setIsAddToPlayListModelOpen(true);
+  };
+  const handleCreatePlayList = async (data) => {
+    await createPlayList(data);
   };
 
+  const handleRefresh = () => {
+    setSearch("");
+    setDifficulty("ALL");
+    setSelectedTag("ALL");
+    setSelectedCompany("ALL");
+    setCurrentPage(1);
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    window.addEventListener("refreshProblems", handleRefresh);
+    return () => window.removeEventListener("refreshProblems", handleRefresh);
+  }, [handleRefresh]);
+
+  const isFilterActive =
+    search !== "" ||
+    difficulty !== "ALL" ||
+    selectedTag !== "ALL" ||
+    selectedCompany !== "ALL" ||
+    sidebarCompany !== "";
+
   return (
-    <div className="w-full max-w-6xl mx-auto mt-10">
-      {/* Header with Create Playlist Button */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Problems</h2>
-        <button
-          className="btn btn-primary gap-2"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <Plus className="w-4 h-4" />
-          Create Playlist
-        </button>
+    <div className=" w-full max-w-6xl mx-auto  bg-primary/20 z-20 py-6 pl-6 ">
+      <div className="flex justify-between items-center mb-6 gap-2">
+        <div className="flex flex-row gap-3 mr-15   items-center justify-center">
+          <h2
+            className="text-2xl font-bold cursor-pointer"
+            onClick={() => window.dispatchEvent(new Event("refreshProblems"))}
+          >
+            Problems
+          </h2>
+        </div>
+        <div className="flex flex-row gap-4">
+          <div className="flex flex-row justify-between gap-3">
+            <button
+              className="btn btn-primary/20 shadow-md hover:bg-primary/20 "
+              onClick={() => {
+                navigate("/problem/03017f17-0349-4161-b499-a312c35aeb20");
+              }}
+            >
+              Solve Demo
+              <div className="relative group">
+                <Info className="w-4 h-4 cursor-pointer" />
+                <span className="absolute text-left top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 text-sm bg-base-200 rounded shadow-lg opacity-0 transition-opacity duration-200 group-hover:opacity-100 z-50  w-max max-w-xs">
+                  New here? Here's sample problem with solution. Run the code to
+                  see the working
+                </span>
+              </div>
+            </button>
+
+            <input
+              type="text"
+              placeholder="Search by title"
+              className="input input-bordered w-full md:w-1/5 bg-base-200"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select
+              className="select select-bordered bg-base-200 w-full md:w-1/5"
+              label={"Difficulty"}
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+            >
+              <option value="ALL">All Difficulties</option>
+              {difficulties.map((diff) => (
+                <option key={diff} value={diff}>
+                  {diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase()}
+                </option>
+              ))}
+            </select>
+            <select
+              label={"Company"}
+              className="select select-bordered bg-base-200 w-full md:w-1/5"
+              value={selectedCompany}
+              onChange={(e) => setSelectedCompany(e.target.value)}
+            >
+              <option value="ALL">All Companies</option>
+              {allCompanyTags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()}
+                </option>
+              ))}
+            </select>
+            <select
+              label={"Tag"}
+              className="select select-bordered bg-base-200 w-full md:w-1/5"
+              value={selectedTag}
+              onChange={(e) => setSelectedTag(e.target.value)}
+            >
+              <option value="ALL">All Tags</option>
+              {allTags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+
+            <button
+              disabled={!isFilterActive}
+              className={`btn btn-ghost outline-shadow bg-base-200 items-center border-gray-700 text-sm h-10 gap-1
+              ${!isFilterActive ? "opacity-80 cursor-not-allowed" : "hover:text-base-content"}`}
+              title="Reset filters"
+              onClick={() => window.dispatchEvent(new Event("refreshProblems"))}
+            >
+              Clear Filters
+              {/* <X className="w-4 h-4 " /> */}
+            </button>
+          </div>
+
+          <button
+            className="btn btn-primary gap-2"
+            onClick={() => {
+              setIsCreateModelOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Create Playlist
+          </button>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <input
-          type="text"
-          placeholder="Search by title"
-          className="input input-bordered w-full md:w-1/3 bg-base-200"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="select select-bordered bg-base-200"
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-        >
-          <option value="ALL">All Difficulties</option>
-          {difficulties?.map((diff) => (
-            <option key={diff} value={diff}>
-              {diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase()}
-            </option>
-          ))}
-        </select>
-        <select
-          className="select select-bordered bg-base-200"
-          value={selectedTag}
-          onChange={(e) => setSelectedTag(e.target.value)}
-        >
-          <option value="ALL">All Tags</option>
-          {allTags?.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Table */}
       <div className="overflow-x-auto rounded-xl shadow-md">
         <table className="table table-zebra table-lg bg-base-200 text-base-content">
-          <thead className="bg-base-300">
+          <thead className="bg-base-200">
             <tr>
               <th>Solved</th>
               <th>Title</th>
               <th>Tags</th>
+
               <th>Difficulty</th>
-              <th>Actions</th>
+              <th>Company Tags</th>
+              <th className="flex flex-row  align-middle justify-center items-center gap-4">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {paginatedProblems.length > 0 ? (
-              paginatedProblems?.map((problem) => {
-                const isSolved = problem.solvedBy?.some(
-                  (user) => user.userId === authUser?.id
-                ) || false;
-                console.log("Problem: ", problem); 
+              paginatedProblems.map((problem) => {
+                const isSolved = problem.solvedBy.some(
+                  (user) => user.userId === authUser?.id,
+                );
+
                 return (
                   <tr key={problem.id}>
                     <td>
@@ -147,38 +514,62 @@ const ProblemsTable = ({ problems }) => {
                       />
                     </td>
                     <td>
-                      <Link to={`/problem/${problem.id}`} className="font-semibold hover:underline">
-                      
+                      <Link
+                        to={`/problem/${problem.id}`}
+                        className="font-semibold hover:underline"
+                      >
                         {problem.title}
                       </Link>
                     </td>
                     <td>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-y-1 my-1 ">
                         {(problem.tags || []).map((tag, idx) => (
                           <span
                             key={idx}
-                            className="badge badge-outline badge-warning text-xs font-bold"
+                            className="badge badge-outline badge-warning text-xs mx-1  font-semibold"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
                     </td>
+
                     <td>
                       <span
                         className={`badge font-semibold text-xs text-white ${
                           problem.difficulty === "EASY"
                             ? "badge-success"
                             : problem.difficulty === "MEDIUM"
-                            ? "badge-warning"
-                            : "badge-error"
+                              ? "badge-warning"
+                              : "badge-error"
                         }`}
                       >
                         {problem.difficulty}
                       </span>
                     </td>
                     <td>
-                      <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
+                      <span className=" flex flex-wrap gap-y-1   font-semibold  ">
+                        {problem.companyTags?.length > 0 ? (
+                          <span>
+                            {problem.companyTags.slice(0, 2).map((tag, idx) => (
+                              <span
+                                key={idx}
+                                className="badge text-xs  text-gray-400 outline px-1.5 mx-1"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </span>
+                        ) : (
+                          <p className="badge  text-xs text-gray-400 outline  ">
+                            Unlisted
+                          </p>
+                        )}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="flex flex-row md:flex-row gap-2 mr-3 items-start md:items-center">
                         {authUser?.role === "ADMIN" && (
                           <div className="flex gap-2">
                             <button
@@ -187,17 +578,52 @@ const ProblemsTable = ({ problems }) => {
                             >
                               <TrashIcon className="w-4 h-4 text-white" />
                             </button>
-                            <button disabled className="btn btn-sm btn-warning">
-                              <PencilIcon className="w-4 h-4 text-white" />
+                            {showDeletedModel && (
+                              <div className="fixed inset-0 flex justify-center items-center  bg-gray-900/50">
+                                <div className=" p-4 rounded  shadow-md bg-base-100 ">
+                                  <h2 className=" p-2 font-bold">
+                                    Confirm Deletion
+                                  </h2>
+                                  <p className="p-2 text-sm">
+                                    Are you sure you want to delete this
+                                    problem?
+                                  </p>
+                                  <div className="flex gap-4 mt-5 mr-4 ml-4 items-center mb-3 justify-between">
+                                    <button
+                                      className="px-4 py-2 bg-primary/80 font-semibold rounded text-sm cursor-pointer"
+                                      onClick={() => {
+                                        handleSureDelete();
+                                        setShowDeletedModel(false);
+                                      }}
+                                    >
+                                      Yes, Delete
+                                    </button>
+                                    <button
+                                      className="px-4 py-2 outline rounded text-sm cursor-pointer"
+                                      onClick={handleModalClose}
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            <button
+                              className="btn btn-sm bg-base-200 outline-gray-50"
+                              onClick={() => handleEditProblem(problem.id)}
+                            >
+                              <PencilIcon className="w-4 h-4" />
                             </button>
                           </div>
                         )}
                         <button
-                          className="btn btn-sm btn-outline flex gap-2 items-center"
+                          className="btn btn-sm btn-outline flex gap-2 items-center p-2 mr-4"
                           onClick={() => handleAddToPlaylist(problem.id)}
                         >
                           <Bookmark className="w-4 h-4" />
-                          <span className="hidden sm:inline">Save to Playlist</span>
+                          <span className="hidden sm:inline">
+                            Save to Playlist
+                          </span>
                         </button>
                       </div>
                     </td>
@@ -215,41 +641,45 @@ const ProblemsTable = ({ problems }) => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2">
-        <button
-          className="btn btn-sm"
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-        >
-          Prev
-        </button>
-        <span className="btn btn-ghost btn-sm">
-          {currentPage} / {totalPages}
-        </span>
-        <button
-          className="btn btn-sm"
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-        >
-          Next
-        </button>
+      <div className="flex justify-center mt-6 items-center  gap-2">
+        <div className=" outline shadow-sm  btn-group rounded-sm">
+          <button
+            className="btn btn-sm"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Prev
+          </button>
+          <span className="btn btn-ghost btn-sm">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            className="btn btn-sm"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
-      {/* Modals */}
-      <CreatePlaylistModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreatePlaylist}
+      <CreatePlayListModel
+        isOpen={isCreateModelOpen} //value of clicked button
+        onClose={() => setIsCreateModelOpen(false)}
+        onSubmit={handleCreatePlayList} //sending data to backend
       />
-      
-      <AddToPlaylistModal
-        isOpen={isAddToPlaylistModalOpen}
-        onClose={() => setIsAddToPlaylistModalOpen(false)}
+      <AddToPlayListModel
+        isOpen={isAddToPlayListModelOpen}
+        onClose={() => setIsAddToPlayListModelOpen(false)}
         problemId={selectedProblemId}
+      />
+      <EditProblemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        problemId={editedProblemId} //sending data to backend
       />
     </div>
   );
 };
 
-export default ProblemsTable;
+export default ProblemTable;

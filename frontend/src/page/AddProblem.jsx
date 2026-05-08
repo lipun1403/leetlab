@@ -1,12 +1,28 @@
-import React from 'react'
-import CreateProblemForm from '../components/CreateProblemForm.jsx'
+// import React from 'react'
+// import CreateProblemForm from '../components/CreateProblemForm.jsx'
+
+// const AddProblem = () => {
+//   return (
+//     <div>
+//       <CreateProblemForm/>
+//     </div>
+//   )
+// }
+
+// export default AddProblem
+
+
+import React from "react";
+import CreateProblemForm from "../components/CreateProblemForm";
+import { useAuthStore } from "../store/useAuthStore";
 
 const AddProblem = () => {
   return (
     <div>
-      <CreateProblemForm/>
+      <CreateProblemForm />
+      {console.log(useAuthStore.getState().authUser)}
     </div>
-  )
-}
+  );
+};
 
-export default AddProblem
+export default AddProblem;
