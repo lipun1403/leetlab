@@ -1,8 +1,5 @@
 import axios from "axios";
 
-// const sleep = (ms) =>
-//     new Promise(resolve => setTimeout(resolve, ms));
-
 const encode = (str) => {
     if (str === null || str === undefined) return str;
     return Buffer.from(str).toString("base64");
@@ -12,29 +9,6 @@ const decode = (str) => {
     if (!str) return str;
     return Buffer.from(str, "base64").toString("utf-8");
 };
-
-// export const getJudge0LanguageId = (language) => {
-//     const languageMap = {
-//         JAVA: 62,
-//         PYTHON: 71,
-//         JAVASCRIPT: 63,
-//         CPP: 54
-//     };
-
-//     return languageMap[language];
-// };
-
-// export const getLanguageName = (id) => {
-//     const languageMap = {
-//         62: "JAVA",
-//         71: "PYTHON",
-//         63: "JAVASCRIPT",
-//         54: "CPP"
-//     };
-
-//     return languageMap[id];
-// };
-
 export const submitBatch = async (submissions) => {
     const encodedSubmissions = submissions.map((s) => ({
         ...s,
@@ -102,10 +76,6 @@ export const pollBatchResults = async (tokens) => {
 
 
 
-
-
-// import axios from "axios";
-
 export const getJudge0LanguageId = (language) => {
   const languageMap = {
     PYTHON: 71,
@@ -116,51 +86,7 @@ export const getJudge0LanguageId = (language) => {
   return languageMap[language.toUpperCase()];
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-// export const pollBatchResults = async (tokens) => {
-//   while (true) {
-//     //hitting end point and getting data
-//     const { data } = await axios.request(
-      
-//       {
-//         method: "GET",
-//         url: `${process.env.JUDGE0_API_URL}/submissions/batch`,
-//         params: {
-//           tokens: tokens.join(","),
-//           base64_encoded: false,
-//         },
-//         headers: {
-//           "x-rapidapi-key": process.env.RAPID_API_KEY,
-//           "x-rapidapi-host": process.env.RAPID_API_HOST,
-//         },
-//       }
-//     );
-//     const results = data.submissions;
-//     const isAllDone = results.every(
-//       (r) => r.status.id !== 1 && r.status.id !== 2
-//     );
 
-//     if (isAllDone) return results;
-//     await sleep(1000);
-//   }
-// };
-// export const submitBatch = async (submissions) => {
-//   const { data } = await axios.request(
-//     {
-//       method: "POST",
-//       url: `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,
-     
-//       headers: {
-//         "x-rapidapi-key": process.env.RAPID_API_KEY,
-//         "x-rapidapi-host": process.env.RAPID_API_HOST,
-//       },
-//       data: {
-//         submissions,
-//       },
-//     }
-//   );
-
-//   return data;
-// };
 export function getLanguageName(languageId) {
   const LANGUAGE_NAMES = {
     63: "JavaScript",

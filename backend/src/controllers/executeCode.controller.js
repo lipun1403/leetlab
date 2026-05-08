@@ -1,187 +1,3 @@
-// import { getJudge0LangName, pollBatchResults, submitBatch } from "../lib/judge0.lib.js";
-// import { ApiError } from "../utils/apiError.js";
-// import { ApiResponse } from "../utils/apiResponse.js";
-// import { prisma } from "../lib/prisma.ts"
-// import asyncHandler from "../utils/asyncHandler.js";
-
-// const run = asyncHandler(async (req, res) => {
-//     console.log("Body: ", req.body);
-
-//     const { stdin, languageId, sourceCode } = req.body
-    
-
-//     if( !Array.isArray(stdin) || stdin.length === 0) {
-//         throw new ApiError(
-//             400,
-//             "Invalid or missing testcases!"
-//         )
-//     }
-
-//     const submissions = stdin.map((input) => ({
-//         source_code: sourceCode,
-//         language_id: languageId,
-//         stdin: input
-//     }))
-
-//     const submitResponse = await submitBatch(submissions)
-
-//     const tokens = submitResponse.map((res) => res.token);
-
-//     const results = await pollBatchResults(tokens)
-
-//     console.log("Result: ", results)
-
-//     const finalResult = results.map((result, i) => {
-//         const stdout = result.stdout?.trim()
-
-//         return {
-//             testCase: i+1,
-//             stdout,
-//             stderr: result.stderr || null,
-//             compiledOutput: result.compile_output || null,
-//             status: result.status.description,
-//             memory: result.memory ? `${result.memory} KB` : undefined,
-//             time: result.time? `${result.time} s` : undefined
-//         }
-//     })
-
-//     console.log("Final result: ", finalResult);
-
-//     return res
-//         .status(200)
-//         .json(
-//             new ApiResponse(
-//                 200,
-//                 finalResult,
-//                 "Executed successfully",
-//             )
-//         )
-// })
-
-// const submit = asyncHandler(async (req, res) => {
-//     console.log("Body: ", req.body);
-
-//     const { stdin, expectedOutput, languageId, problemId, sourceCode } = req.body
-    
-//     const userId = req.user.id
-
-//     if( !Array.isArray(stdin) || stdin.length === 0 || !Array.isArray(expectedOutput) || expectedOutput.length !== stdin.length ) {
-//         throw new ApiError(
-//             400,
-//             "Invalid or missing testcases!"
-//         )
-//     }
-
-//     const submissions = stdin.map((input) => ({
-//         source_code: sourceCode,
-//         language_id: languageId,
-//         stdin: input
-//     }))
-
-//     const submitResponse = await submitBatch(submissions)
-
-//     const tokens = submitResponse.map((res) => res.token);
-
-//     const results = await pollBatchResults(tokens)
-
-//     console.log("Result: ", results)
-
-//     let allPassed = true;
-//     const finalResult = results.map((result, i) => {
-//         const stdout = result.stdout?.trim()
-
-//         const expected = expectedOutput[i]?.trim()
-//         const passed = stdout===expected
-
-//         if(!passed) allPassed = false
-
-//         return {
-//             testCase: i+1,
-//             passed,
-//             stdout,
-//             expected,
-//             stderr: result.stderr || null,
-//             compiledOutput: result.compile_output || null,
-//             status: result.status.description,
-//             memory: result.memory ? `${result.memory} KB` : undefined,
-//             time: result.time? `${result.time} s` : undefined
-//         }
-//     })
-
-//     console.log("Final result: ", finalResult);
-    
-//     const submission = await prisma.submission.create({
-//         data: {
-//             userId,
-//             problemId,
-//             sourceCode,
-//             language: getJudge0LangName(languageId),
-//             stdin: stdin.join("\n"),
-//             stdout: JSON.stringify(finalResult.map((r) => r.stdout)),
-//             stderr: finalResult.some((r) => r.stderr)? JSON.stringify(finalResult.map((r) => r.stderr)) : null,
-//             compileOutput: finalResult.some((r) => r.compiledOutput)? JSON.stringify(finalResult.map((r) => r.compiledOutput)) : null,
-//             status: allPassed ? "Accepted" : "Wrong Answer",
-//             memory: finalResult.some((r) => r.memory)? JSON.stringify(finalResult.map((r) => r.memory)) : null,
-//             time: finalResult.some((r) => r.time)? JSON.stringify(finalResult.map((r) => r.time)) : null
-//         }
-//     })
-
-//     if(allPassed) {
-//         await prisma.problemSolved.upsert({  // upsert: if not exists create else update
-//             where: {
-//                 userId_problemId: {
-//                     userId, problemId
-//                 }
-//             },
-//             update: {},
-//             create: {
-//                 userId, problemId
-//             }
-//         })
-//     }
-
-//     const testCaseResult = finalResult.map((result) => ({
-//         submissionId: submission.id,
-//         testCase: result.testCase,
-//         passed: result.passed,
-//         stdout: result.stdout,
-//         expected: result.expected,
-//         stderr: result.stderr,
-//         compiledOutput: result.compileOutput,
-//         status: result.status,
-//         memory: result.memory,
-//         time: result.time
-//     }))
-
-//     await prisma.testCaseResult.createMany({
-//         data: testCaseResult
-//     })
-    
-//     const submissionWithTestcase = await prisma.submission.findUnique({
-//         where: {
-//             id: submission.id
-//         },
-//         include: {
-//             testCases: true
-//         }
-//     })
-
-//     return res
-//         .status(200)
-//         .json(
-//             new ApiResponse(
-//                 200,
-//                 submissionWithTestcase,
-//                 "Executed successfully",
-//             )
-//         )
-// })
-
-// export {
-//     run,
-//     submit
-// }
-
 
 
 import { prisma } from "../libs/prisma.ts";
@@ -190,42 +6,37 @@ import {
   pollBatchResults,
   submitBatch,
 } from "../libs/judge0.lib.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/apiError.js";
 
-export const executeCode = async (req, res) => {
-  try {
-    const { source_code, language_id, stdin, expected_outputs, problemId } =
-      req.body;
+export const executeCode = asyncHandler( async (req, res) => {
+    const { source_code, language_id, stdin, expected_outputs, problemId } = req.body;
 
     const userId = req.user.id;
 
-    // Validate test cases
     if (
       !Array.isArray(stdin) ||
       stdin.length === 0 ||
       !Array.isArray(expected_outputs) ||
       expected_outputs.length !== stdin.length
     ) {
-      return res.status(400).json({ error: "Invalid or Missing test cases" });
+      throw new ApiError(400, "Invalid or Missing test cases");
     }
 
-    // Reset detailedResults before executing new code
     const detailedResults = [];
 
-    // Prepare each test case for Judge0 batch submission
     const submissions = stdin.map((input) => ({
       source_code,
       language_id,
       stdin: input,
     }));
 
-    // Send batch of submissions to Judge0
     const submitResponse = await submitBatch(submissions);
     const tokens = submitResponse.map((res) => res.token);
 
-    // Poll Judge0 for results of all submitted test cases
     const results = await pollBatchResults(tokens);
 
-    // Analyze test case results
     let allPassed = true;
     results.forEach((result, i) => {
       const stdout = result.stdout?.trim();
@@ -245,51 +56,41 @@ export const executeCode = async (req, res) => {
       });
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Code Executed Successfully!",
-      detailedResults,
-    });
-  } catch (error) {
-    console.error("Error executing code:", error.message);
-    res.status(500).json({ error: "Failed to execute code" });
-  }
-};
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        "Code executed successfully",
+        detailedResults,
+      )
+    );
+});
 
-export const submitCode = async (req, res) => {
-  try {
-    const { source_code, language_id, stdin, expected_outputs, problemId } =
-      req.body;
+export const submitCode = asyncHandler( async (req, res) => {
+    const { source_code, language_id, stdin, expected_outputs, problemId } = req.body;
     const userId = req.user.id;
 
-    // Validate test cases
     if (
       !Array.isArray(stdin) ||
       stdin.length === 0 ||
       !Array.isArray(expected_outputs) ||
       expected_outputs.length !== stdin.length
     ) {
-      return res.status(400).json({ error: "Invalid or Missing test cases" });
+      throw new ApiError(400, "Invalid or Missing test cases");
     }
 
-    // Reset detailedResults before submitting new code
     const detailedResults = [];
 
-    // Prepare each test case for Judge0 batch submission
     const submissions = stdin.map((input) => ({
       source_code,
       language_id,
       stdin: input,
     }));
 
-    // Send batch of submissions to Judge0
     const submitResponse = await submitBatch(submissions);
     const tokens = submitResponse.map((res) => res.token);
 
-    // Poll Judge0 for results of all submitted test cases
     const results = await pollBatchResults(tokens);
 
-    // Analyze test case results
     let allPassed = true;
     results.forEach((result, i) => {
       const stdout = result.stdout?.trim();
@@ -312,7 +113,6 @@ export const submitCode = async (req, res) => {
       });
     });
 
-    // Store submission summary
     const submission = await prisma.submission.create({
       data: {
         userId,
@@ -337,7 +137,6 @@ export const submitCode = async (req, res) => {
       },
     });
 
-    // If all test cases passed, mark problem as solved for the user
     if (allPassed) {
       await prisma.problemSolved.upsert({
         where: {
@@ -354,7 +153,6 @@ export const submitCode = async (req, res) => {
       });
     }
 
-    // Save individual test case results using detailedResults
     const testCaseResults = detailedResults.map((result) => ({
       submissionId: submission.id,
       testCase: result.testCase,
@@ -381,13 +179,12 @@ export const submitCode = async (req, res) => {
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Code Submitted Successfully!",
-      submission: submissionWithTestCase,
-    });
-  } catch (error) {
-    console.error("Error submitting code:", error.message);
-    res.status(500).json({ error: "Failed to submit code" });
-  }
-};
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        "Code submitted successfully", {
+          submission: submissionWithTestCase
+        }
+      )
+    );
+});

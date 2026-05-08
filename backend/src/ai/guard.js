@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const guardrailAgent = new Agent({
   name: "LeetLab Guardrail",
-  model: "gpt-4.1-mini",
+  model: "gpt-4.1-nano",
   instructions: `
         You are a strict classifier.
 
